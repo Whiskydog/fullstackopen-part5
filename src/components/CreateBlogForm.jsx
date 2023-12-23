@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import blogService from '../services/blogs';
 
-const CreateBlogForm = ({ setBlogs }) => {
+const CreateBlogForm = ({ setBlogs, setNotification }) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
@@ -11,9 +11,20 @@ const CreateBlogForm = ({ setBlogs }) => {
     const formData = new FormData(event.target);
     const blogData = Object.fromEntries(formData.entries());
 
-    const blog = await blogService.create(blogData);
-    setBlogs((blogs) => blogs.concat(blog));
-
+    try {
+      const blog = await blogService.create(blogData);
+      setBlogs((blogs) => blogs.concat(blog));
+      setNotification({
+        type: 'success',
+        content: `A new blog ${blog.title} added`,
+      });
+    } catch (error) {
+      setNotification({
+        type: 'error',
+        content: `${error.response.data.error}`,
+      });
+    }
+    document.activeElement && document.activeElement.blur();
     setTitle('');
     setAuthor('');
     setUrl('');
