@@ -1,5 +1,5 @@
-import axios from 'axios';
 import { useState } from 'react';
+import loginService from '../services/login';
 
 const LoginForm = ({ setUser }) => {
   const [username, setUsername] = useState('');
@@ -7,8 +7,9 @@ const LoginForm = ({ setUser }) => {
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    const response = await axios.post('/api/login', { username, password });
-    setUser(response.data);
+    const user = await loginService.login(username, password);
+    setUser(user);
+    window.localStorage.setItem('user', JSON.stringify(user));
   };
 
   return (
