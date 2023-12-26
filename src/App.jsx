@@ -12,7 +12,8 @@ const App = () => {
   const [notification, setNotification] = useState(null);
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    const updateBlogs = async () => setBlogs(await blogService.getAll());
+    updateBlogs();
   }, []);
 
   useEffect(() => {
@@ -42,7 +43,7 @@ const App = () => {
     createBlogFormRef.current.toggle();
     try {
       const blog = await blogService.create(blogData);
-      setBlogs((blogs) => blogs.concat(blog));
+      setBlogs(await blogService.getAll());
       setNotification({
         type: 'success',
         content: `A new blog ${blog.title} added`,
