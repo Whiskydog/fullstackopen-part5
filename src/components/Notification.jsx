@@ -1,4 +1,7 @@
-const Notification = ({ type, content }) => {
+const Notification = ({ spec }) => {
+  if (!spec) return null;
+
+  const { type, content } = spec;
   const styles = {
     fontSize: '1.5rem',
     border: '4px solid',
