@@ -43,11 +43,23 @@ const App = () => {
     createBlogFormRef.current.toggle();
     try {
       const blog = await blogService.create(blogData);
-      setBlogs(await blogService.getAll());
+      setBlogs(blogs.concat(blog));
       setNotification({
         type: 'success',
         content: `A new blog ${blog.title} added`,
       });
+    } catch (error) {
+      setNotification({
+        type: 'error',
+        content: `${error.response.data.error}`,
+      });
+    }
+  };
+
+  const likeBlog = async (blog) => {
+    try {
+      const updatedBlog = await blogService.giveLike(blog);
+      setBlogs(blogs.map((b) => (b.id === updatedBlog.id ? updatedBlog : b)));
     } catch (error) {
       setNotification({
         type: 'error',
@@ -77,7 +89,7 @@ const App = () => {
         <CreateBlogForm createBlog={addBlog} />
       </Toggle>
       {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} onLike={() => likeBlog(blog)} />
       ))}
     </div>
   );
