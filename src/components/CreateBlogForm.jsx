@@ -7,10 +7,7 @@ const CreateBlogForm = ({ createBlog }) => {
 
   const handleCreateBlog = async (event) => {
     event.preventDefault();
-    const formData = new FormData(event.target);
-    const blogData = Object.fromEntries(formData.entries());
-
-    createBlog(blogData);
+    createBlog({ title, author, url });
 
     document.activeElement && document.activeElement.blur();
     setTitle('');
