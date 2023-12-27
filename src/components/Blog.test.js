@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom';
-import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { render, screen } from '@testing-library/react';
 import Blog from './Blog';
 
 const blog = {
@@ -24,5 +25,16 @@ describe('render a blog', () => {
     expect(blogDiv).toHaveTextContent(blog.author);
     expect(blogDiv).not.toHaveTextContent(blog.url);
     expect(blogDiv).not.toHaveTextContent(`likes ${blog.likes}`);
+  });
+
+  test('showing details', async () => {
+    const { container } = render(<Blog blog={blog} />);
+    const user = userEvent.setup();
+
+    await user.click(screen.getByText('view'));
+
+    const blogDiv = container.firstElementChild;
+    expect(blogDiv).toHaveTextContent(blog.url);
+    expect(blogDiv).toHaveTextContent(`likes ${blog.likes}`);
   });
 });
