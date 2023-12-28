@@ -38,3 +38,15 @@ describe('render a blog', () => {
     expect(blogDiv).toHaveTextContent(`likes ${blog.likes}`);
   });
 });
+
+test('clicking the like button twice calls event handler twice', async () => {
+  const mockHandler = jest.fn();
+  const user = userEvent.setup();
+  render(<Blog blog={blog} onLike={mockHandler} />);
+
+  await user.click(screen.getByText('view'));
+  await user.click(screen.getByText('like'));
+  await user.click(screen.getByText('like'));
+
+  expect(mockHandler.mock.calls).toHaveLength(2);
+});
