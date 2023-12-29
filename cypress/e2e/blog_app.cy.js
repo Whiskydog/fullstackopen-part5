@@ -86,6 +86,22 @@ describe('Blog app', function () {
         cy.get('@blog').contains('button', 'view').click();
         cy.get('@blog').should('not.contain', 'button', 'remove');
       });
+
+      it('Blogs are displayed by likes in descending order', function () {
+        // Ensure last blog contains certain text
+        cy.get('.blog')
+          .eq(2)
+          .contains('Canonical string reduction Edsger W. Dijkstra');
+
+        // We give a like to that blog
+        cy.get('.blog').eq(2).contains('button', 'view').click();
+        cy.get('.blog').eq(2).contains('button', 'like').click();
+
+        // Ensure that blog is now first on the list (all other blogs have 0 likes)
+        cy.get('.blog')
+          .eq(0)
+          .contains('Canonical string reduction Edsger W. Dijkstra');
+      });
     });
   });
 });
