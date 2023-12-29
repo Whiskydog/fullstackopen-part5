@@ -64,6 +64,13 @@ describe('Blog app', function () {
         cy.get('@blog').contains('button', 'like').click();
         cy.get('@blog').contains('likes 1');
       });
+
+      it('The user who created a blog can delete it', function () {
+        cy.contains('React patterns').parent().as('blog');
+        cy.get('@blog').contains('button', 'view').click();
+        cy.get('@blog').contains('button', 'remove').click();
+        cy.contains('React patterns').should('not.exist');
+      });
     });
   });
 });
