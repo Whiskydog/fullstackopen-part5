@@ -1,10 +1,12 @@
-import user from '../fixtures/user.json';
+import users from '../fixtures/users.json';
 import blogs from '../fixtures/blogs.json';
 
 describe('Blog app', function () {
   beforeEach(function () {
     cy.request('POST', `${Cypress.env('BACKEND')}/testing/reset`);
-    cy.request('POST', `${Cypress.env('BACKEND')}/users`, user);
+    users.forEach((user) =>
+      cy.request('POST', `${Cypress.env('BACKEND')}/users`, user)
+    );
     cy.visit('');
   });
 
@@ -18,6 +20,8 @@ describe('Blog app', function () {
   });
 
   describe('Login', function () {
+    const user = users[0];
+
     it('Succeeds with correct credentials', function () {
       cy.get('input[name=username]').type(user.username);
       cy.get('input[name=password]').type(user.password);
@@ -39,6 +43,7 @@ describe('Blog app', function () {
 
   describe('When logged in', function () {
     beforeEach(function () {
+      const user = users[0];
       cy.login(user.username, user.password);
     });
 
@@ -70,6 +75,16 @@ describe('Blog app', function () {
         cy.get('@blog').contains('button', 'view').click();
         cy.get('@blog').contains('button', 'remove').click();
         cy.contains('React patterns').should('not.exist');
+      });
+
+      it('Only the user who created a blog can see the delete button', function () {
+        cy.contains('button', 'logout').click();
+        const userNotCreator = users[1];
+        cy.login(userNotCreator.username, userNotCreator.password);
+
+        cy.contains('React patterns').parent().as('blog');
+        cy.get('@blog').contains('button', 'view').click();
+        cy.get('@blog').should('not.contain', 'button', 'remove');
       });
     });
   });
