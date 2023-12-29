@@ -35,4 +35,20 @@ describe('Blog app', function () {
       );
     });
   });
+
+  describe('When logged in', function () {
+    beforeEach(function () {
+      cy.login(user.username, user.password);
+    });
+
+    it('A blog can be created', function () {
+      cy.contains('New blog').click();
+      cy.get('#blog-input-title').type('Example blog');
+      cy.get('#blog-input-author').type('Example author');
+      cy.get('#blog-input-url').type('http://example.com');
+      cy.contains('button', 'Create').click();
+      cy.contains('A new blog Example blog added');
+      cy.contains('Example blog Example author').contains('view');
+    });
+  });
 });
