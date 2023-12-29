@@ -7,3 +7,15 @@ Cypress.Commands.add('login', (username, password) => {
     cy.visit('');
   });
 });
+
+Cypress.Commands.add('postBlog', (blog) => {
+  cy.request({
+    url: `${Cypress.env('BACKEND')}/blogs`,
+    method: 'POST',
+    body: blog,
+    headers: {
+      Authorization: `Bearer ${JSON.parse(localStorage.getItem('user')).token}`,
+    },
+  });
+  cy.visit('');
+});

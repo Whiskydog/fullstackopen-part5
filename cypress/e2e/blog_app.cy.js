@@ -1,4 +1,5 @@
 import user from '../fixtures/user.json';
+import blogs from '../fixtures/blogs.json';
 
 describe('Blog app', function () {
   beforeEach(function () {
@@ -17,14 +18,14 @@ describe('Blog app', function () {
   });
 
   describe('Login', function () {
-    it('succeeds with correct credentials', function () {
+    it('Succeeds with correct credentials', function () {
       cy.get('input[name=username]').type(user.username);
       cy.get('input[name=password]').type(user.password);
       cy.contains('button', 'login').click();
       cy.contains(`${user.name} logged in`);
     });
 
-    it('fails with wrong credentials', function () {
+    it('Fails with wrong credentials', function () {
       cy.get('input[name=username]').type(user.username);
       cy.get('input[name=password]').type('wrongpassword');
       cy.contains('button', 'login').click();
@@ -49,6 +50,20 @@ describe('Blog app', function () {
       cy.contains('button', 'Create').click();
       cy.contains('A new blog Example blog added');
       cy.contains('Example blog Example author').contains('view');
+    });
+
+    describe('And a blog exists', function () {
+      beforeEach(function () {
+        blogs.forEach((blog) => cy.postBlog(blog));
+      });
+
+      it('Users can like blogs', function () {
+        cy.contains('React patterns').parent().as('blog');
+        cy.get('@blog').contains('button', 'view').click();
+        cy.get('@blog').contains('likes 0');
+        cy.get('@blog').contains('button', 'like').click();
+        cy.get('@blog').contains('likes 1');
+      });
     });
   });
 });
